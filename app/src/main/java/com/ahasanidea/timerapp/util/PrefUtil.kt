@@ -35,7 +35,7 @@ class PrefUtil {
             editor.apply()
 
         }
-        private const val SECONDS_REMAINING_ID = "com.resocoder.timer.seconds_remaining"
+        private const val SECONDS_REMAINING_ID = "com.ahasanidea.timerapp.seconds_remaining"
         fun getSecondsRemaining(context: Context): Long{
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             return preferences.getLong(SECONDS_REMAINING_ID, 0)
@@ -46,5 +46,17 @@ class PrefUtil {
             editor.putLong(SECONDS_REMAINING_ID, seconds)
             editor.apply()
         }
+        private const val ALARM_SET_TIME_ID="com.ahasanidea.timerapp.background_time"
+
+        fun getAlarmSetTime(context: Context):Long{
+            val preferences=PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getLong(ALARM_SET_TIME_ID,0)
+        }
+        fun setAlarmSetTime(time:Long,context: Context){
+            val editor=PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putLong(ALARM_SET_TIME_ID,time)
+            editor.apply()
+        }
+
     }
 }
