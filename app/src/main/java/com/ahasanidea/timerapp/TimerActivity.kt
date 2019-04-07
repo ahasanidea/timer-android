@@ -9,6 +9,7 @@ import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.ahasanidea.timerapp.util.NotificationUtil
 import com.ahasanidea.timerapp.util.PrefUtil
 import com.ahasanidea.timerapp.util.TimeExpiredReceiver
 import kotlinx.android.synthetic.main.activity_main.*
@@ -77,8 +78,9 @@ class TimerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         initTimer()
-        //TODO:  hide notification
+
         removeAlarm(this)
+        NotificationUtil.hideTimerNotification(this)
     }
 
     private fun initTimer() {
@@ -128,7 +130,7 @@ class TimerActivity : AppCompatActivity() {
 
     private fun UpdateCountdownUI() {
         val minutesUntilFinished = secondsRemaining / 60
-        val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished
+        val secondsInMinuteUntilFinished = secondsRemaining - (minutesUntilFinished * 60)
         val secondsStr = secondsInMinuteUntilFinished.toString()
         textView_countdown.text =
             "$minutesUntilFinished:${if (secondsStr.length == 2) secondsStr else "0" + secondsStr}"
@@ -179,10 +181,10 @@ class TimerActivity : AppCompatActivity() {
         if (timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime= setAlarm(this, nowSeconds,secondsRemaining)
-            //TODO:  show notification
+            NotificationUtil.showTimerRunning(this,wakeUpTime)
 
         } else if (timerState == TimerState.Paused) {
-            //TODO: show notification
+            NotificationUtil.showTimerPaused(this)
         }
         PrefUtil.setPreviousTimerLengthSeconds(timerLengthSeconds, this)
         PrefUtil.setSecondsRemaining(secondsRemaining, this)
@@ -201,7 +203,11 @@ class TimerActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                val intent=Intent(this,SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
